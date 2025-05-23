@@ -25,3 +25,5 @@ class HyundaiFlagsSP(IntFlag):
   ENABLE_RADAR_TRACKS = 2 ** 3
   LONG_TUNING_DYNAMIC = 2 ** 4
   LONG_TUNING_PREDICTIVE = 2 ** 5
+  NON_SCC = 2 ** 6
+  NON_SCC_FCA = 2 ** 7
