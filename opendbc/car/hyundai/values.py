@@ -378,6 +378,11 @@ class CAR(Platforms):
     CarSpecs(mass=1690, wheelbase=3.055, steerRatio=17),  # mass: from https://www.hyundai-motor.com.tw/clicktobuy/custin#spec_0, steerRatio: from learner
     flags=HyundaiFlags.CHECKSUM_CRC8,
   )
+  HYUNDAI_ELANTRA_N_2022 = HyundaiPlatformConfig(
+    [HyundaiCarDocs("Hyundai Elantra N 2022", "No Smart Cruise Control (SCC)", min_enable_speed=20 * CV.MPH_TO_MS, car_parts=CarParts.common([CarHarness.hyundai_k]))],
+    CarSpecs(mass=3296 * CV.LB_TO_KG, wheelbase=2.72, steerRatio=12.2, tireStiffnessFactor=0.65),
+    flags=HyundaiFlags.CHECKSUM_CRC8 | HyundaiFlags.CAMERA_SCC | HyundaiFlags.UNSUPPORTED_LONGITUDINAL,
+  )
 
   # Kia
   KIA_FORTE = HyundaiPlatformConfig(
