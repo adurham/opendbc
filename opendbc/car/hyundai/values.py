@@ -383,7 +383,7 @@ class CAR(Platforms):
   HYUNDAI_ELANTRA_N_2022 = HyundaiPlatformConfig(
     [HyundaiCarDocs("Hyundai Elantra N 2022", "No Smart Cruise Control (SCC)", min_enable_speed=20 * CV.MPH_TO_MS, car_parts=CarParts.common([CarHarness.hyundai_k]))],
     CarSpecs(mass=3296 * CV.LB_TO_KG, wheelbase=2.72, steerRatio=12.2, tireStiffnessFactor=0.65),
-    flags=HyundaiFlags.CHECKSUM_CRC8 | HyundaiFlags.CAMERA_SCC | HyundaiFlags.UNSUPPORTED_LONGITUDINAL | HyundaiFlags.NON_SCC | HyundaiFlags.NON_SCC_FCA,
+    flags=HyundaiFlags.CHECKSUM_CRC8 | HyundaiFlags.NON_SCC | HyundaiFlags.NON_SCC_FCA,
   )
 
   # Kia
@@ -767,7 +767,7 @@ FW_QUERY_CONFIG = FwQueryConfig(
   non_essential_ecus={
     Ecu.abs: [CAR.HYUNDAI_PALISADE, CAR.HYUNDAI_SONATA, CAR.HYUNDAI_SANTA_FE_2022, CAR.KIA_K5_2021, CAR.HYUNDAI_ELANTRA_2021,
               CAR.HYUNDAI_SANTA_FE, CAR.HYUNDAI_KONA_EV_2022, CAR.HYUNDAI_KONA_EV, CAR.HYUNDAI_CUSTIN_1ST_GEN, CAR.KIA_SORENTO,
-              CAR.KIA_CEED, CAR.KIA_SELTOS],
+              CAR.KIA_CEED, CAR.KIA_SELTOS, CAR.HYUNDAI_ELANTRA_N_2022],
   },
   extra_ecus=[
     (Ecu.adas, 0x730, None),              # ADAS Driving ECU on platforms with LKA steering
@@ -807,8 +807,5 @@ LEGACY_SAFETY_MODE_CAR = CAR.with_flags(HyundaiFlags.LEGACY)
 # TODO: another PR with (HyundaiFlags.LEGACY | HyundaiFlags.UNSUPPORTED_LONGITUDINAL | HyundaiFlags.CAMERA_SCC |
 #       HyundaiFlags.CANFD_RADAR_SCC | HyundaiFlags.CANFD_NO_RADAR_DISABLE | )
 UNSUPPORTED_LONGITUDINAL_CAR = CAR.with_flags(HyundaiFlags.LEGACY) | CAR.with_flags(HyundaiFlags.UNSUPPORTED_LONGITUDINAL)
-
-NON_SCC_CAR = CAR.with_flags(HyundaiFlags.NON_SCC)
-NON_SCC_FCA_CAR = CAR.with_flags(HyundaiFlags.NON_SCC_FCA)
 
 DBC = CAR.create_dbc_map()
