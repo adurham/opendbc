@@ -7,7 +7,6 @@ from opendbc.car.common.conversions import Conversions as CV
 from opendbc.car.structs import CarParams
 from opendbc.car.docs_definitions import CarFootnote, CarHarness, CarDocs, CarParts, Column
 from opendbc.car.fw_query_definitions import FwQueryConfig, Request, p16
-from opendbc.sunnypilot.car.hyundai.values import HyundaiFlagsSP
 
 Ecu = CarParams.Ecu
 
@@ -126,6 +125,8 @@ class HyundaiFlags(IntFlag):
   FCEV = 2 ** 25
 
   ALT_LIMITS_2 = 2 ** 26
+  NON_SCC = 2 ** 27
+  NON_SCC_FCA = 2 ** 28
 
 
 class Footnote(Enum):
@@ -382,8 +383,7 @@ class CAR(Platforms):
   HYUNDAI_ELANTRA_N_2022 = HyundaiPlatformConfig(
     [HyundaiCarDocs("Hyundai Elantra N 2022", "No Smart Cruise Control (SCC)", min_enable_speed=20 * CV.MPH_TO_MS, car_parts=CarParts.common([CarHarness.hyundai_k]))],
     CarSpecs(mass=3296 * CV.LB_TO_KG, wheelbase=2.72, steerRatio=12.2, tireStiffnessFactor=0.65),
-    flags=HyundaiFlags.CHECKSUM_CRC8 | HyundaiFlags.CAMERA_SCC | HyundaiFlags.UNSUPPORTED_LONGITUDINAL,
-    spFlags=HyundaiFlagsSP.NON_SCC | HyundaiFlagsSP.NON_SCC_FCA,
+    flags=HyundaiFlags.CHECKSUM_CRC8 | HyundaiFlags.CAMERA_SCC | HyundaiFlags.UNSUPPORTED_LONGITUDINAL | HyundaiFlags.NON_SCC | HyundaiFlags.NON_SCC_FCA,
   )
 
   # Kia
@@ -808,7 +808,7 @@ LEGACY_SAFETY_MODE_CAR = CAR.with_flags(HyundaiFlags.LEGACY)
 #       HyundaiFlags.CANFD_RADAR_SCC | HyundaiFlags.CANFD_NO_RADAR_DISABLE | )
 UNSUPPORTED_LONGITUDINAL_CAR = CAR.with_flags(HyundaiFlags.LEGACY) | CAR.with_flags(HyundaiFlags.UNSUPPORTED_LONGITUDINAL)
 
-NON_SCC_CAR = CAR.with_sp_flags(HyundaiFlagsSP.NON_SCC)
-NON_SCC_FCA_CAR = CAR.with_sp_flags(HyundaiFlagsSP.NON_SCC_FCA)
+NON_SCC_CAR = CAR.with_flags(HyundaiFlags.NON_SCC)
+NON_SCC_FCA_CAR = CAR.with_flags(HyundaiFlags.NON_SCC_FCA)
 
 DBC = CAR.create_dbc_map()
