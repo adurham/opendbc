@@ -7,7 +7,7 @@ from opendbc.can.can_define import CANDefine
 from opendbc.car import Bus, create_button_events, structs
 from opendbc.car.common.conversions import Conversions as CV
 from opendbc.car.hyundai.hyundaicanfd import CanBus
-from opendbc.car.hyundai.values import HyundaiFlags, CAR, DBC, Buttons, CarControllerParams, NON_SCC_CAR, NON_SCC_FCA_CAR
+from opendbc.car.hyundai.values import HyundaiFlags, CAR, DBC, Buttons, CarControllerParams
 from opendbc.car.interfaces import CarStateBase
 
 from opendbc.sunnypilot.car.hyundai.carstate_ext import CarStateExt
@@ -126,7 +126,7 @@ class CarState(CarStateBase, EsccCarStateBase, MadsCarState, CarStateExt):
       ret.cruiseState.enabled = cp.vl["TCS13"]["ACC_REQ"] == 1
       ret.cruiseState.standstill = False
       ret.cruiseState.nonAdaptive = False
-    elif self.CP.carFingerprint in NON_SCC_CAR:
+    if self.CP.flags & (HyundaiFlags.NON_SCC):
       cruise_available_msg = "E_CRUISE_CONTROL" if self.CP.flags & (HyundaiFlags.HYBRID | HyundaiFlags.EV) else "EMS16"
       cruise_enabled_msg = "E_CRUISE_CONTROL" if self.CP.flags & (HyundaiFlags.HYBRID | HyundaiFlags.EV) else "LVR12"
       cruise_speed_msg = "ELECT_GEAR" if self.CP.flags & (HyundaiFlags.HYBRID | HyundaiFlags.EV) else "LVR12"
@@ -188,11 +188,11 @@ class CarState(CarStateBase, EsccCarStateBase, MadsCarState, CarStateExt):
       ret.stockFcw = (aeb_warning or scc_warning) and not aeb_braking
       ret.stockAeb = aeb_warning and aeb_braking
 
-    if not self.CP.openpilotLongitudinalControl and self.CP.carFingerprint in NON_SCC_FCA_CAR:
+    if not self.CP.openpilotLongitudinalControl and self.CP.flags & (HyundaiFlags.NON_SCC_FCA):
       aeb_src = "FCA11" if self.CP.flags & HyundaiFlags.USE_FCA.value else "SCC12"
       aeb_sig = "FCA_CmdAct" if self.CP.flags & HyundaiFlags.USE_FCA.value else "AEB_CmdAct"
       aeb_warning = cp_cruise.vl[aeb_src]["CF_VSM_Warn"] != 0
-      scc_warning = False if self.CP.carFingerprint in NON_SCC_CAR else cp_cruise.vl["SCC12"]["TakeOverReq"] == 1  # sometimes only SCC system shows an FCW
+      scc_warning = False if self.CP.flags & (HyundaiFlags.NON_SCC) else cp_cruise.vl["SCC12"]["TakeOverReq"] == 1  # sometimes only SCC system shows an FCW
       aeb_braking = cp_cruise.vl[aeb_src]["CF_VSM_DecCmdAct"] != 0 or cp_cruise.vl[aeb_src][aeb_sig] != 0
       ret.stockFcw = (aeb_warning or scc_warning) and not aeb_braking
       ret.stockAeb = aeb_warning and aeb_braking
@@ -434,7 +434,7 @@ class CarState(CarStateBase, EsccCarStateBase, MadsCarState, CarStateExt):
       ("LKAS11", 100)
     ]
 
-    if CP.flags & HyundaiFlags.CAMERA_SCC:
+    if CP.flags & (HyundaiFlags.CAMERA_SCC | HyundaiFlags.NON_SCC):
       cam_messages += [
         ("SCC11", 50),
         ("SCC12", 50),
